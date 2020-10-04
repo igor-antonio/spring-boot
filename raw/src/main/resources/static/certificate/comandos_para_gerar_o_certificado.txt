@@ -1,0 +1,32 @@
+
+Criação do certificado com 1 ano de expiração para que o Google Chrome não reclame dele.
+
+É necessário importar o localhost-ca.crt na sua máquina e torná-lo trusted para que o https funcione totalmente.
+
+
+openssl req -x509 -nodes -new -sha256 -days 365 -newkey rsa:2048 \
+-keyout localhost-ca.key \
+-out localhost-ca.pem \
+-subj '/CN=localhost'
+
+openssl x509 -outform pem \
+-in localhost-ca.pem -\
+out localhost-ca.crt
+
+openssl req -new -nodes -newkey rsa:2048 \
+-keyout localhost.key \
+-out localhost.csr \
+-subj "/C=BR/ST=Sao Paulo/L=Sao Paulo/O=SQL42/CN=localhost"
+
+openssl x509 -req -sha256 -days 365 \
+-in localhost.csr \
+-CA localhost-ca.pem \
+-CAkey localhost-ca.key \
+-CAcreateserial \
+-extfile domains.ext \
+-out localhost.crt
+
+openssl pkcs12 -export \
+-out sql42.p12 \
+-inkey localhost.key \
+-in localhost.crt \

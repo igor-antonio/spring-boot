@@ -1,0 +1,43 @@
+
+.table-dark.table-hover tbody tr:hover {
+    color: #fff;
+    background-color: #6c757d;
+
+}
+
+.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
+  color: rgba(255, 255, 255, 0.75);
+  background-color: #6c757d;
+  
+}
+
+body {
+    background-color: #343a40;
+}
+
+.sql42-row-44{
+  height: 44px;
+  vertical-align: middle;
+  align-items: center;
+  align-content: center;
+}
+
+.sql42-row-64{
+  height: 64px;
+  vertical-align: middle;
+  align-items: center;
+  align-content: center;
+}
+
+.sql42-align-center{
+  text-align: center;
+}
+
+.sql42-align-left{
+  text-align: left;
+}
+
+.sql42-align-right{
+  text-align: right;
+}
+  

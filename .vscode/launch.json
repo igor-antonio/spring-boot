@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-RawApplication<raw>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.sql42.mssql.raw.RawApplication",
+            "projectName": "raw",
+            "args": ""
+        }
+    ]
+}

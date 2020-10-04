@@ -24,4 +24,6 @@ Esse projeto tem algumas implementações que acho minimamente necessárias para
 
     - Hikari: mesmo motivo do JDBC SQL Server.
 
-Espero que ajude a quem precisar iniciar.
+Espero que ajude a quem quiser aprender.
+
+Bons estudos.

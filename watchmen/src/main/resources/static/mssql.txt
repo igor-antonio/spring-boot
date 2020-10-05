@@ -1,0 +1,13 @@
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 1433:1433 --name sql001 -h sql001 -d mcr.microsoft.com/mssql/server:2019-latest
+
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14330:1433 --name sql100 -h sql100 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14331:1433 --name sql101 -h sql101 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14332:1433 --name sql102 -h sql102 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14333:1433 --name sql103 -h sql103 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14334:1433 --name sql104 -h sql104 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14335:1433 --name sql105 -h sql105 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14336:1433 --name sql106 -h sql106 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14337:1433 --name sql107 -h sql107 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14338:1433 --name sql108 -h sql108 -d mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=P@$$w0rd' -p 14339:1433 --name sql109 -h sql109 -d mcr.microsoft.com/mssql/server:2019-latest

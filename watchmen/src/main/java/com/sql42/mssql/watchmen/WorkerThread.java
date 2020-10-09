@@ -2,18 +2,27 @@ package com.sql42.mssql.watchmen;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 import java.util.concurrent.Callable;
 
+import com.sql42.mssql.watchmen.dao.ServernameDynDao;
+
 // We need a scope of prototype so that a new instance is created each time. The default scope is singleton so you would always get the same instance
 // if we did not specify a scope of prototype.
 
 @Component
 @Scope("prototype")
-public class WorkerThread implements Callable<String> {
+public class WorkerThread implements Callable<String> { 
+
+    @Value("${spring.datasource.url}") private String url;
+    
+    @Value("${spring.datasource.username}") private String username;
+    
+    @Value("${spring.datasource.password}") private String password;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkerThread.class);
 
@@ -36,12 +45,25 @@ public class WorkerThread implements Callable<String> {
             LOGGER.error("An unexpected interrupt exception occurred!", e);
         }
 
-        return "Request [" + request + "] " + createUUID();
-    }
+        LOGGER.debug("Url [" + url + "]");
 
-    private String createUUID() {
-        UUID id = UUID.randomUUID();
-        return id.toString();
+        String alias = ServerList.getAliasFromQueue();
+
+        LOGGER.debug("Alias [" + alias + "]");
+
+        String servernameSource = ServerList.getServername(alias);
+
+        LOGGER.debug("ServernameSource [" + servernameSource + "]");
+
+        ServernameDynDao servernameDynDao = new ServernameDynDao(servernameSource, url, username, password);
+
+        servernameSource = "";
+
+        servernameSource = servernameDynDao.insertMetric();
+
+        LOGGER.debug("ServernameSource executed [" + servernameSource + "]");
+
+        return "Request [" + servernameSource + "] ";
     }
 
 }

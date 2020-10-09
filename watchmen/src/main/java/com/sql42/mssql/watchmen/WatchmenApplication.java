@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,28 +21,53 @@ public class WatchmenApplication implements CommandLineRunner {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WatchmenApplication.class);
 
 	@Autowired
-	private ApplicationContext context;
+    private ApplicationContext context;
+    
+    /*
+    @Autowired
+    private static Environment env;
+    */
 
-	@Value("${number.of.requests}")
-	private int numberOfRequests;
+    
+    @Value("${spring.datasource.url}") private String url;
+    
+    @Value("${spring.datasource.username}") private String username;
+    
+    @Value("${spring.datasource.password}") private String password;
 
-	@Value("${number.of.threads}")
-	private int numberOfThreads;
+    /*
+     * @Value("${number.of.requests}") private int numberOfRequests;
+     * 
+     * @Value("${number.of.threads}") private int numberOfThreads;
+     */
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
+
+        //ServerList.setUsername(username);
+        //ServerList.setUsername(password);
+
+        ServerList.addServer("sql100", "127.0.0.1:14330");
+        ServerList.addServer("sql101", "127.0.0.1:14331");
+        ServerList.addServer("sql102", "127.0.0.1:14332");
+        ServerList.addServer("sql103", "127.0.0.1:14333");
+        ServerList.addServer("sql104", "127.0.0.1:14334");
+
 		SpringApplication application = new SpringApplication(WatchmenApplication.class);
-		application.setApplicationContextClass(AnnotationConfigApplicationContext.class);
-		SpringApplication.run(WatchmenApplication.class, args);
+        application.setApplicationContextClass(AnnotationConfigApplicationContext.class);
+        SpringApplication.run(WatchmenApplication.class, args);
+  
     }
 
     @Override
     public void run(String... strings) throws Exception {
         LOGGER.debug("Spring Boot multithreaded example has started....");
-        LOGGER.debug("Number of requests: " + numberOfRequests);
-        LOGGER.debug("Number of threads: " + numberOfThreads);
+        LOGGER.debug("Number of requests: " + ServerList.getQueueSize());
         LOGGER.debug("Number of processors: " + Runtime.getRuntime().availableProcessors());
+        LOGGER.debug("Source url: " + url);
 
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        ServerList.printQueue();
+
+        ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         // TODO; This does not seem to work and need to research why.
         // A java program can't terminate or exit while a normal thread is executing. So, left over threads
@@ -54,7 +80,7 @@ public class WatchmenApplication implements CommandLineRunner {
 //            return t;
 //        });
 
-        List<WorkerThread> tasks = new ArrayList<>(numberOfRequests);
+        List<WorkerThread> tasks = new ArrayList<>(ServerList.getQueueSize());
 
         // --------------------------------------------------------------------------------------------------------------
         // Notes for multithreading separate worker tasks.
@@ -68,7 +94,7 @@ public class WatchmenApplication implements CommandLineRunner {
         //    @Scope("prototype")
         // --------------------------------------------------------------------------------------------------------------
 
-        for (int i = 0; i < numberOfRequests; i++) {
+        for (int i = 0; i < ServerList.getQueueSize(); i++) {
             WorkerThread wt = context.getBean(WorkerThread.class, String.valueOf(i));
             tasks.add(wt);
         }

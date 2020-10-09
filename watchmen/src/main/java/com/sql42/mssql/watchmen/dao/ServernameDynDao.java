@@ -41,7 +41,7 @@ public class ServernameDynDao {
             , resultSetSqlServerStartTime;
 
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create().type(SimpleDriverDataSource.class);
-        DataSourceBuilder dataDestinationBuilder = DataSourceBuilder.create();
+        DataSourceBuilder dataDestinationBuilder = DataSourceBuilder.create().type(SimpleDriverDataSource.class);
         DataSource dataSource;
         DataSource dataDestination;
         

@@ -104,7 +104,7 @@ public class WatchmenApplication implements CommandLineRunner {
         List<Future<String>> futures = executorService.invokeAll(tasks);
 
         for (Future<String> future : futures) {
-            String result = future.get(10000, TimeUnit.MILLISECONDS);
+            String result = future.get(600, TimeUnit.SECONDS);
             LOGGER.debug("Thread reply results [" + result + "]");
         }
 

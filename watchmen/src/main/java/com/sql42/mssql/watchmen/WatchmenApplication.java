@@ -9,11 +9,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.Environment;
+//import org.springframework.core.env.Environment;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.*;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.concurrent.*;
 
 @SpringBootApplication
 public class WatchmenApplication implements CommandLineRunner {
@@ -45,13 +45,13 @@ public class WatchmenApplication implements CommandLineRunner {
 
         //ServerList.setUsername(username);
         //ServerList.setUsername(password);
-
+        /*
         ServerList.addServer("sql100", "127.0.0.1:14330");
         ServerList.addServer("sql101", "127.0.0.1:14331");
         ServerList.addServer("sql102", "127.0.0.1:14332");
         ServerList.addServer("sql103", "127.0.0.1:14333");
         ServerList.addServer("sql104", "127.0.0.1:14334");
-
+        */
 		SpringApplication application = new SpringApplication(WatchmenApplication.class);
         application.setApplicationContextClass(AnnotationConfigApplicationContext.class);
         SpringApplication.run(WatchmenApplication.class, args);
@@ -60,13 +60,33 @@ public class WatchmenApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+
         LOGGER.debug("Spring Boot multithreaded example has started....");
         LOGGER.debug("Number of requests: " + ServerList.getQueueSize());
         LOGGER.debug("Number of processors: " + Runtime.getRuntime().availableProcessors());
         LOGGER.debug("Source url: " + url);
 
-        ServerList.printQueue();
+        ProducerServer producerServer = new ProducerServer();
 
+        producerServer.start();
+
+            ConsumeServer consumerServer001 = new ConsumeServer();
+            ConsumeServer consumerServer002 = new ConsumeServer();
+            ConsumeServer consumerServer003 = new ConsumeServer();
+            ConsumeServer consumerServer004 = new ConsumeServer();
+
+            consumerServer001.start();
+            consumerServer002.start();
+            consumerServer003.start();
+            consumerServer004.start();
+
+            producerServer.join();
+            consumerServer001.join();
+            consumerServer002.join();
+            consumerServer003.join();
+            consumerServer004.join();
+
+/*
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         // TODO; This does not seem to work and need to research why.
@@ -109,7 +129,7 @@ public class WatchmenApplication implements CommandLineRunner {
         }
 
         executorService.shutdown();
-
+*/
         LOGGER.debug("Spring Boot multithreaded example has ended....");
     }
 }

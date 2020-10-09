@@ -14,6 +14,8 @@ public class ServerList {
         , username
         , password
         , url;
+    
+    private static boolean isAlive;
 
     public static void addServer(String alias, String servername){
 
@@ -30,13 +32,25 @@ public class ServerList {
 
     public static String getServername(String alias) {
 
-        return listServername.get(alias);
-        
+        String aliasToRemove = alias;
+
+        alias = listServername.get(alias);
+
+        listServername.remove(aliasToRemove);
+
+        return alias;
+
     }
 
     public static int getQueueSize() {
 
         return queue.size();
+        
+    }
+
+    public static boolean isQueueEmpty() {
+
+        return queue.isEmpty();
         
     }
 
@@ -76,6 +90,14 @@ public class ServerList {
 
     public static void setUrl(String url) {
         ServerList.url = url;
+    }
+
+    public static boolean isAlive() {
+        return isAlive;
+    }
+
+    public static void setAlive(boolean isAlive) {
+        ServerList.isAlive = isAlive;
     }
     
 }

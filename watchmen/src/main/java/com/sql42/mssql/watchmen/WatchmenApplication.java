@@ -1,5 +1,11 @@
 package com.sql42.mssql.watchmen;
 
+import com.sql42.mssql.watchmen.controller.ProducerServerController;
+
+import java.util.concurrent.TimeUnit;
+
+import com.sql42.mssql.watchmen.ConsumerServer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +15,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-//import org.springframework.core.env.Environment;
-
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.concurrent.*;
 
 @SpringBootApplication
 public class WatchmenApplication implements CommandLineRunner {
@@ -22,18 +23,39 @@ public class WatchmenApplication implements CommandLineRunner {
 
 	@Autowired
     private ApplicationContext context;
-    
-    /*
-    @Autowired
-    private static Environment env;
-    */
 
+    @Autowired
+    ProducerServerController producerServerController;
+
+    @Value("${spring.datasource.url}")
+    private String url;
     
-    @Value("${spring.datasource.url}") private String url;
+    private static String urlStatic;
+ 
+    //@Value("${spring.datasource.url}")
+    public void setUrlStatic(String url){
+        WatchmenApplication.urlStatic = url;
+    }
+
+    @Value("${spring.datasource.username}")
+    private String username;
+
+    private static String usernameStatic;
+
+    //@Value("${spring.datasource.username}")
+    public void setUsernameStatic(String username){
+        WatchmenApplication.usernameStatic = username;
+    }
     
-    @Value("${spring.datasource.username}") private String username;
-    
-    @Value("${spring.datasource.password}") private String password;
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    private static String passwordStatic;
+
+    //@Value("${spring.datasource.password}")
+    public void setPasswordStatic(String password){
+        WatchmenApplication.passwordStatic = password;
+    }
 
     /*
      * @Value("${number.of.requests}") private int numberOfRequests;
@@ -42,9 +64,9 @@ public class WatchmenApplication implements CommandLineRunner {
      */
 
     public static void main(String[] args) {
+        
 
-        //ServerList.setUsername(username);
-        //ServerList.setUsername(password);
+
         /*
         ServerList.addServer("sql100", "127.0.0.1:14330");
         ServerList.addServer("sql101", "127.0.0.1:14331");
@@ -52,6 +74,7 @@ public class WatchmenApplication implements CommandLineRunner {
         ServerList.addServer("sql103", "127.0.0.1:14333");
         ServerList.addServer("sql104", "127.0.0.1:14334");
         */
+
 		SpringApplication application = new SpringApplication(WatchmenApplication.class);
         application.setApplicationContextClass(AnnotationConfigApplicationContext.class);
         SpringApplication.run(WatchmenApplication.class, args);
@@ -61,30 +84,38 @@ public class WatchmenApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-        LOGGER.debug("Spring Boot multithreaded example has started....");
-        LOGGER.debug("Number of requests: " + ServerList.getQueueSize());
-        LOGGER.debug("Number of processors: " + Runtime.getRuntime().availableProcessors());
-        LOGGER.debug("Source url: " + url);
+        this.setUrlStatic(url);
+        this.setUsernameStatic(username);
+        this.setPasswordStatic(password);
 
-        ProducerServer producerServer = new ProducerServer();
+        ServerListManager.setUrl(urlStatic);
+        ServerListManager.setUsername(usernameStatic);
+        ServerListManager.setPassword(passwordStatic);
 
-        producerServer.start();
+        LOGGER.debug("Spring Boot multithreaded has started....");
+        //LOGGER.debug("Number of requests: " + ServerList.getQueueSize());
+        LOGGER.debug("Watchmen - Number of processors [" + Runtime.getRuntime().availableProcessors() + "]");
+        LOGGER.debug("Watchmen - Server List url from application.properties [" + urlStatic + "]");
+        
+        ServerListManager.setRunning(true);
 
-            ConsumeServer consumerServer001 = new ConsumeServer();
-            ConsumeServer consumerServer002 = new ConsumeServer();
-            ConsumeServer consumerServer003 = new ConsumeServer();
-            ConsumeServer consumerServer004 = new ConsumeServer();
+        producerServerController.start();
 
-            consumerServer001.start();
-            consumerServer002.start();
-            consumerServer003.start();
-            consumerServer004.start();
+        ConsumerServer consumerServer001 = new ConsumerServer();
+        ConsumerServer consumerServer002 = new ConsumerServer();
+        ConsumerServer consumerServer003 = new ConsumerServer();
+        ConsumerServer consumerServer004 = new ConsumerServer();
 
-            producerServer.join();
-            consumerServer001.join();
-            consumerServer002.join();
-            consumerServer003.join();
-            consumerServer004.join();
+        consumerServer001.start();
+        consumerServer002.start();
+        consumerServer003.start();
+        consumerServer004.start();
+
+        producerServerController.join();
+        consumerServer001.join();
+        consumerServer002.join();
+        consumerServer003.join();
+        consumerServer004.join();
 
 /*
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

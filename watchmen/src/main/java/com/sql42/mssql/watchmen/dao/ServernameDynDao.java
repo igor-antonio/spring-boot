@@ -7,6 +7,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import com.sql42.mssql.watchmen.ServerListManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -20,6 +22,14 @@ public class ServernameDynDao {
         , urlDestination
         , username
         , password;
+
+    public ServernameDynDao () {
+
+    }
+
+    public ServernameDynDao (String servernameSource) {
+        this.servernameSource = servernameSource;
+    }
 
     public ServernameDynDao (String servernameSource
         , String urlDestination
@@ -35,7 +45,12 @@ public class ServernameDynDao {
 
         servernameSource = "jdbc:sqlserver://" + servernameSource + ";databaseName=master;applicationName=watchmen";
         LOGGER.debug("url source [" + servernameSource + "]");
+
+        this.urlDestination = ServerListManager.getUrl();
         LOGGER.debug("url destination [" + urlDestination + "]");
+
+        this.username = ServerListManager.getUsername();
+        this.password = ServerListManager.getPassword();
 
         String resutSetServername
             , resultSetSqlServerStartTime;
@@ -45,13 +60,13 @@ public class ServernameDynDao {
         DataSource dataSource;
         DataSource dataDestination;
         
-        dataSourceBuilder.url(servernameSource);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(password);
+        dataSourceBuilder.url(this.servernameSource);
+        dataSourceBuilder.username(this.username);
+        dataSourceBuilder.password(this.password);
         
-        dataDestinationBuilder.url(urlDestination);
-        dataDestinationBuilder.username(username);
-        dataDestinationBuilder.password(password);
+        dataDestinationBuilder.url(this.urlDestination);
+        dataDestinationBuilder.username(this.username);
+        dataDestinationBuilder.password(this.password);
   
         dataSource = dataSourceBuilder.build();
         dataDestination = dataDestinationBuilder.build();

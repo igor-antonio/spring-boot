@@ -47,11 +47,11 @@ public class WorkerThread implements Callable<String> {
 
         LOGGER.debug("Url [" + url + "]");
 
-        String alias = ServerList.getAliasFromQueue();
+        String alias = ServerListManager.getAliasFromQueue();
 
         LOGGER.debug("Alias [" + alias + "]");
 
-        String servernameSource = ServerList.getServername(alias);
+        String servernameSource = ServerListManager.getServername(alias);
 
         LOGGER.debug("ServernameSource [" + servernameSource + "]");
 

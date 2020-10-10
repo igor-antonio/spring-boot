@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class ServerList {
+public class ServerListManager {
 
     private static Hashtable<String, String> listServername = new Hashtable<String, String>();
 
@@ -15,7 +15,7 @@ public class ServerList {
         , password
         , url;
     
-    private static boolean isAlive;
+    private static boolean isActive, isRunning;
 
     public static void addServer(String alias, String servername){
 
@@ -54,18 +54,14 @@ public class ServerList {
         
     }
 
-    public static void printQueue() {
-
-        System.out.println(queue);
-        
-    }
+    //gets and sets
 
     public static String getDatabaseName() {
         return databaseName;
     }
 
     public static void setDatabaseName(String databaseName) {
-        ServerList.databaseName = databaseName;
+        ServerListManager.databaseName = databaseName;
     }
 
     public static String getUsername() {
@@ -73,7 +69,7 @@ public class ServerList {
     }
 
     public static void setUsername(String username) {
-        ServerList.username = username;
+        ServerListManager.username = username;
     }
 
     public static String getPassword() {
@@ -81,7 +77,7 @@ public class ServerList {
     }
 
     public static void setPassword(String password) {
-        ServerList.password = password;
+        ServerListManager.password = password;
     }
 
     public static String getUrl() {
@@ -89,15 +85,23 @@ public class ServerList {
     }
 
     public static void setUrl(String url) {
-        ServerList.url = url;
+        ServerListManager.url = url;
     }
 
-    public static boolean isAlive() {
-        return isAlive;
+    public static boolean isActive() {
+        return isActive;
     }
 
-    public static void setAlive(boolean isAlive) {
-        ServerList.isAlive = isAlive;
+    public static void setActive(boolean isActive) {
+        ServerListManager.isActive = isActive;
+    }
+
+    public static boolean isRunning() {
+        return isRunning;
+    }
+
+    public static void setRunning(boolean isRunning) {
+        ServerListManager.isRunning = isRunning;
     }
     
 }

@@ -124,9 +124,9 @@ public class ServernameDynDao {
             throw new RuntimeException(e);
         }
         finally {
-            if (connectionSource != null) {
+            if (connectionDestination != null) {
                 try {
-                    connectionSource.close();
+                    connectionDestination.close();
                 }
                 catch (SQLException e) {}
             }

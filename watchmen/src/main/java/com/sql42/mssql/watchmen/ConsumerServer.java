@@ -24,39 +24,41 @@ public class ConsumerServer extends Thread {
 
         LOGGER.debug("consumer server [started]");
 
-        while (ServerListManager.isAlive()) {
+        while (ServerListManager.isRunning()) {
 
-            if(ServerListManager.isQueueEmpty()){
-                LOGGER.debug("consumer server [nothing to do]");
-            }
+            while (ServerListManager.isActive()) {
 
-            while (!ServerListManager.isQueueEmpty()) {
+                if(ServerListManager.isQueueEmpty()){
+                    LOGGER.debug("consumer server [nothing to do]");
+                }
 
-                String alias = ServerListManager.getAliasFromQueue();
+                while (!ServerListManager.isQueueEmpty()) {
 
-                LOGGER.debug("consumer server alias from queue [" + alias + "]");
+                    String alias = ServerListManager.getAliasFromQueue();
 
-                String servernameSource = ServerListManager.getServername(alias);
+                    LOGGER.debug("consumer server - alias from queue [" + alias + "]");
 
-                LOGGER.debug("consumer server server name source from queue [" + servernameSource + "]");
+                    String servernameSource = ServerListManager.getServername(alias);
 
-                //ServernameDynDao servernameDynDao = new ServernameDynDao(servernameSource, url, username, password);
-                ServernameDynDao servernameDynDao = new ServernameDynDao(servernameSource);
+                    LOGGER.debug("consumer server - server name source from queue [" + servernameSource + "]");
 
-                servernameSource = "";
+                    //ServernameDynDao servernameDynDao = new ServernameDynDao(servernameSource, url, username, password);
+                    ServernameDynDao servernameDynDao = new ServernameDynDao(servernameSource);
 
-                servernameSource = servernameDynDao.insertMetric();
+                    servernameSource = "";
 
-                LOGGER.debug("consumer server server name source processed [" + servernameSource + "]");
-                
-                /*
+                    servernameSource = servernameDynDao.insertMetric();
+
+                    LOGGER.debug("consumer server - server name source processed [" + servernameSource + "]");
+                    
+                }
+
                 try {
-                    TimeUnit.SECONDS.sleep(5);
+                    TimeUnit.SECONDS.sleep(30);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                */
-                
+
             }
 
             try {
@@ -66,6 +68,7 @@ public class ConsumerServer extends Thread {
             }
 
         }
+
     }
     
 }

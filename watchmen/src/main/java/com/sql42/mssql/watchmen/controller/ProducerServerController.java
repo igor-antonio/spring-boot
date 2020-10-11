@@ -35,23 +35,39 @@ public class ProducerServerController extends Thread {
         
         Control control = controlDao.findByCollectorName("sqlserver_start_time");
 
+        ServerListManager.setRunning(control.isRunning());
+
         ServerListManager.setActive(control.isActive());
 
         LOGGER.debug("producer server is active[" + ServerListManager.isActive() + "]");
 
-        while (ServerListManager.isAlive()) {
+        while (ServerListManager.isRunning()) {
 
-            List<ServerList> serverlist = (List<ServerList>) ServerListDao.findAll();
+            while (ServerListManager.isActive()) {
 
-            for (ServerList serverListItem : serverlist) {
-            
-                ServerListManager.addServer(serverListItem.getAlias(), serverListItem.getIpPort());
-    
-            }
+                List<ServerList> serverlist = (List<ServerList>) ServerListDao.findAll();
 
-            while (!ServerListManager.isQueueEmpty()){
+                for (ServerList serverListItem : serverlist) {
+                
+                    ServerListManager.addServer(serverListItem.getAlias(), serverListItem.getIpPort());
+        
+                }
 
-                ServerListManager.printQueue();
+                while (!ServerListManager.isQueueEmpty()){
+
+                    try {
+                        TimeUnit.SECONDS.sleep(60);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+                control = controlDao.findByCollectorName("sqlserver_start_time");
+
+                ServerListManager.setActive(control.isActive());
+
+                LOGGER.debug("producer server is active[" + ServerListManager.isActive() + "]");
 
                 try {
                     TimeUnit.SECONDS.sleep(60);
@@ -63,11 +79,9 @@ public class ProducerServerController extends Thread {
 
             control = controlDao.findByCollectorName("sqlserver_start_time");
 
-            isActive = control.isActive();
+            ServerListManager.setRunning(control.isRunning());
 
-            ServerListManager.setAlive(isActive);
-
-            LOGGER.debug("producer server is active[" + ServerListManager.isAlive() + "]");
+            ServerListManager.setActive(control.isActive());
 
             try {
                 TimeUnit.SECONDS.sleep(60);

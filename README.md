@@ -1,28 +1,36 @@
 # spring-boot
+Raw
+    Casca de um projeto usando Spring Boot conectando em SQL Server.
 
-Casca de um projeto usando Spring Boot conectando em SQL Server.
+    Sou DBA SQL Server, então o desenvolvimento não é minha skill primária, então podem haver item não configurados da melhor forma possível, não recomendo uma implantação de um projeto basedo neste repo direto em produção, se o fizer é por sua conta e risco.
 
-Sou DBA SQL Server, então o desenvolvimento não é minha skill primária, então podem haver item não configurados da melhor forma possível, não recomendo uma implantação de um projeto basedo neste repo direto em produção, se o fizer é por sua conta e risco.
+    Esse projeto tem algumas implementações que acho minimamente necessárias para uma aplicação:
 
-Esse projeto tem algumas implementações que acho minimamente necessárias para uma aplicação:
+    - Site em HTTPS: na pasta certificate tem todas as instuções de como gerei a esrutura para que o meu Google Chrome aceitasse o localhost como HTTPS.
 
-- Site em HTTPS: na pasta certificate tem todas as instuções de como gerei a esrutura para que o meu Google Chrome aceitasse o localhost como HTTPS.
+    - Autenticação LDAP: Simulando uma autenticação em um Active Directory, o Spring Boot sobe um servidor LDAP para teste, aonde username: ben e passsword: benspassword.
 
-- Autenticação LDAP: Simulando uma autenticação em um Active Directory, o Spring Boot sobe um servidor LDAP para teste, aonde username: ben e passsword: benspassword.
+    - String de conexão dinâmica: como eu precisava de um porta central que dele eu conseguisse conectar em outros SQL Server, implementei uma forma de poder escoler servidores para mandar comandos pré-definidos.
 
-- String de conexão dinâmica: como eu precisava de um porta central que dele eu conseguisse conectar em outros SQL Server, implementei uma forma de poder escoler servidores para mandar comandos pré-definidos.
+    - Pooling de Conexão: como DBA não podia deixar este item de fora, todas as conexões respeitam as regras de pooling de conexão do application.properties.
 
-- Pooling de Conexão: como DBA não podia deixar este item de fora, todas as conexões respeitam as regras de pooling de conexão do application.properties.
+    - Front End: usei o Bootstrap para facilitar minha vida, afinal sou péssimo em layout.
 
-- Front End: usei o Bootstrap para facilitar minha vida, afinal sou péssimo em layout.
+    - O projeto no POM.xml está com versões mais específicas de alguns componentes:
 
-- O projeto no POM.xml está com versões mais específicas de alguns componentes:
+        - JVM 11: Versão LTS, além disso, compilei e executei com a OpenJDK 11 J9, se usar outra pode ser que tenha de ajustar algo.
 
-    - JVM 11: Versão LTS, além disso, compilei e executei com a OpenJDK 11 J9, se usar outra pode ser que tenha de ajustar algo.
+        - JDBC SQL Server: setada versão fixa para não gerar problemas de colocar em uso uma versão beta.
 
-    - JDBC SQL Server: setada versão fixa para não gerar problemas de colocar em uso uma versão beta.
+        - Hikari: mesmo motivo do JDBC SQL Server.
 
-    - Hikari: mesmo motivo do JDBC SQL Server.
+watchmen
+
+    Aplicação multithread para coleta de dados em múltiplos servidores SQL Server. A lista de servidores fica em uma tabela de um servidor central, tendo uma tabela de controle para definir se a coleta está ativa e se o programa está rodando.
+
+    Também adicionei a entrada abaixo nos application.properties para o JPA não usar campos unicode nem na criação de tabelas nem nas queries geradas por ele:
+
+    spring.jpa.properties.hibernate.use_nationalized_character_data = false
 
 Espero que ajude a quem quiser aprender.
 

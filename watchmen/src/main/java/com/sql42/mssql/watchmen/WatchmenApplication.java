@@ -2,10 +2,6 @@ package com.sql42.mssql.watchmen;
 
 import com.sql42.mssql.watchmen.controller.ProducerServerController;
 
-import java.util.concurrent.TimeUnit;
-
-import com.sql42.mssql.watchmen.ConsumerServer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +80,8 @@ public class WatchmenApplication implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
+        LOGGER.debug("Spring Boot multithreaded has started....");
+
         this.setUrlStatic(url);
         this.setUsernameStatic(username);
         this.setPasswordStatic(password);
@@ -92,7 +90,6 @@ public class WatchmenApplication implements CommandLineRunner {
         ServerListManager.setUsername(usernameStatic);
         ServerListManager.setPassword(passwordStatic);
 
-        LOGGER.debug("Spring Boot multithreaded has started....");
         //LOGGER.debug("Number of requests: " + ServerList.getQueueSize());
         LOGGER.debug("Watchmen - Number of processors [" + Runtime.getRuntime().availableProcessors() + "]");
         LOGGER.debug("Watchmen - Server List url from application.properties [" + urlStatic + "]");
@@ -101,21 +98,26 @@ public class WatchmenApplication implements CommandLineRunner {
 
         producerServerController.start();
 
-        ConsumerServer consumerServer001 = new ConsumerServer();
-        ConsumerServer consumerServer002 = new ConsumerServer();
-        ConsumerServer consumerServer003 = new ConsumerServer();
-        ConsumerServer consumerServer004 = new ConsumerServer();
+        //int[] intArray = new type [size]; 
 
-        consumerServer001.start();
-        consumerServer002.start();
-        consumerServer003.start();
-        consumerServer004.start();
+        //List<ConsumerServer> listConsumerServer = new ArrayList<ConsumerServer>();
+
+        ConsumerServer[] consumerServer = new ConsumerServer[Runtime.getRuntime().availableProcessors()];
+
+        for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
+            
+            consumerServer[i] = new ConsumerServer();
+            consumerServer[i].start();
+
+        }
 
         producerServerController.join();
-        consumerServer001.join();
-        consumerServer002.join();
-        consumerServer003.join();
-        consumerServer004.join();
+
+        for (int i = 0; i < Runtime.getRuntime().availableProcessors(); i++) {
+            
+            consumerServer[i].join();
+
+        }
 
 /*
         ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());

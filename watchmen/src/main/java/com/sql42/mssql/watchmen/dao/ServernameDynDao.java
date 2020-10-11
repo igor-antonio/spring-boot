@@ -43,10 +43,11 @@ public class ServernameDynDao {
 
     public String insertMetric(){
 
-        servernameSource = "jdbc:sqlserver://" + servernameSource + ";databaseName=master;applicationName=watchmen";
+        servernameSource = "jdbc:sqlserver://" + servernameSource + ";databaseName=master;applicationName=watchmen_dyn";
         LOGGER.debug("url source [" + servernameSource + "]");
 
         this.urlDestination = ServerListManager.getUrl();
+        this.urlDestination = this.urlDestination.replace("watchmen", "watchmen_dyn");
         LOGGER.debug("url destination [" + urlDestination + "]");
 
         this.username = ServerListManager.getUsername();
@@ -68,8 +69,8 @@ public class ServernameDynDao {
         dataDestinationBuilder.username(this.username);
         dataDestinationBuilder.password(this.password);
   
-        dataSource = dataSourceBuilder.build();
-        dataDestination = dataDestinationBuilder.build();
+        dataSource = dataSourceBuilder.type(SimpleDriverDataSource.class).build();
+        dataDestination = dataDestinationBuilder.type(SimpleDriverDataSource.class).build();
 
         String sqlCommand = "SELECT @@SERVERNAME AS server_name, a.sqlserver_start_time FROM sys.dm_os_sys_info AS a;";
 
@@ -93,6 +94,7 @@ public class ServernameDynDao {
             
             resultSet.close();
             prepareStatement.close();
+            connectionSource.close();
 
         }
         catch (SQLException e) {
@@ -116,8 +118,8 @@ public class ServernameDynDao {
             connectionDestination = dataDestination.getConnection();
             PreparedStatement prepareStatement = connectionDestination.prepareStatement(sqlCommand);
             prepareStatement.execute();
-            
             prepareStatement.close();
+            connectionDestination.close();
 
         }
         catch (SQLException e) {
